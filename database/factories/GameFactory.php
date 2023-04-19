@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Word>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Game>
  */
-class WordFactory extends Factory
+class GameFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class WordFactory extends Factory
     public function definition(): array
     {
         return [
-            'word' => fake()->word(),
+            //
         ];
     }
 }

@@ -59,7 +59,7 @@ class WordSeeder extends Seeder
     public function run(): void
     {
         foreach ($this->initialWords as $word) {
-            \App\Models\Word::create(['value' => $word]);
+            \App\Models\Word::create(['word' => $word]);
         }
     }
 }
