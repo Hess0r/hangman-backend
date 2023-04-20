@@ -32,4 +32,5 @@ Route::controller(GameController::class)
     ->group(function () {
         Route::get('/', 'show')->name('show');
         Route::post('/', 'store')->name('create');
+        Route::put('/', 'update')->name('update');
     });
