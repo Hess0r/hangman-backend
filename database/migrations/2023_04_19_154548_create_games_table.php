@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\GameDifficulty;
 use App\Enums\GameStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -18,6 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreignId('word_id');
 
+            $table->string('difficulty');
             $table->string('correct_letters');
             $table->string('incorrect_letters');
             $table->string('current_word');

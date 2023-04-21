@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\GameDifficulty;
 use App\Enums\GameStatus;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +21,7 @@ class Game extends Model
 
     protected $casts = [
         'status' => GameStatus::class,
+        'difficulty' => GameDifficulty::class,
     ];
 
     protected function guessedLetters(): Attribute

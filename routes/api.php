@@ -33,4 +33,5 @@ Route::controller(GameController::class)
         Route::get('/', 'show')->name('show');
         Route::post('/', 'store')->name('create');
         Route::put('/', 'update')->name('update');
+        Route::delete('/', 'destroy')->name('destroy');
     });

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\CreateGame;
+use App\Actions\EndGameIfExists;
 use App\Actions\Guess;
 use App\Enums\GameDifficulty;
-use App\Enums\GameStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GameResource;
+use App\Models\Game;
 use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,52 +18,46 @@ class GameController extends Controller
 {
     /**
      * Create new game
-     *
-     * @return void
      */
-    public function store(Request $request)
+    public function store(Request $request, EndGameIfExists $endGameIfExistsAction, CreateGame $createGameAction)
     {
         $validated = $request->validate([
             'difficulty' => ['required', 'string', new Enum(GameDifficulty::class)],
         ]);
 
-        abort_if($request->user()->gameInProgress()->exists(), 400, 'A game is already in progress');
+        $endGameIfExistsAction->handle($request->user()->gameInProgress);
 
-        [$l, $h] = (GameDifficulty::from($validated['difficulty']))->bounds();
+        $difficulty = GameDifficulty::from($validated['difficulty']);
+
+        [$l, $h] = $difficulty->bounds();
 
         $word = Word::whereRaw('LENGTH(word) >= ?', [$l])
             ->whereRaw('LENGTH(word) <= ?', [$h])
-            // ->whereNotIn([])
+            ->whereNotIn('id', $request->user()->games()->get()->pluck('id')->toArray())
             ->inRandomOrder()
             ->first();
 
-        abort_if(is_null($word), 400, 'There are no unplayed words left');
+        abort_if(is_null($word), 400, 'There are no unplayed words left in this difficulty');
 
-        $game = (new CreateGame())->handle($request->user(), $word);
+        $game = $createGameAction->handle($request->user(), $word, $difficulty);
 
         return new GameResource($game);
     }
 
     /**
      * Get current game
-     *
-     * @return void
      */
-    public function show(Request $request)
+    public function show()
     {
-        $game = $request->user()->gameInProgress;
-
-        abort_if(is_null($game), 400, 'There is no game in progress');
+        $game = $this->getCurrentGameOrFail();
 
         return new GameResource($game);
     }
 
     /**
      * Guess letter
-     *
-     * @return void
      */
-    public function update(Request $request)
+    public function update(Request $request, Guess $guessAction)
     {
         $validated = $request->validate([
             'letter' => ['required', 'string', 'size:1'],
@@ -70,52 +65,31 @@ class GameController extends Controller
 
         $letter = Str::lower($validated['letter']);
 
-        $game = $request->user()->gameInProgress;
-
-        abort_if(is_null($game), 400, 'There is no game in progress');
+        $game = $this->getCurrentGameOrFail();
 
         abort_if(strpos($game->guessed_letters, $letter), 400, 'This letter has already been guessed');
 
-        $correct = strpos($game->remaining_letters, $letter) !== false;
-
-        if ($correct) {
-            $game->remaining_letters = Str::replace($letter, '_', $game->remaining_letters);
-
-            foreach (str_split($game->word->word) as $index => $l) {
-                if ($l === $letter) {
-                    $game->current_word = substr_replace($game->current_word, $letter, $index, 1);
-                }
-            }
-
-            $game->correct_letters = $game->correct_letters.$letter;
-
-            if ($game->current_word === $game->word->word) {
-                $game->status = GameStatus::WON;
-            }
-        } else {
-            $game->incorrect_letters = $game->incorrect_letters.$letter;
-
-            if ($game->remaining_incorrect_guesses === 0) {
-                $game->status = GameStatus::LOST;
-            }
-        }
-
-        $game->save();
+        $game = $guessAction->handle($game, $letter);
 
         return new GameResource($game);
+    }
 
-        // correct or incorrect guess
-        //
-        // correct:
-        //  replace in remaining_letters
-        //  replace in current_word
-        //  add to correct_letters
-        //
-        // incorrect:
-        //  add to incorrect_words
-        //
-        // check if game finished:
-        //  this was the last error -> LOST
-        //  current_word equals $word->word / remaining letters is all '_' -> WON
+    /**
+     * End game in progress if exists
+     */
+    public function destroy(Request $request, EndGameIfExists $endGameIfExistsAction)
+    {
+        $endGameIfExistsAction->handle($request->user()->gameInProgress);
+
+        return response()->noContent();
+    }
+
+    private function getCurrentGameOrFail(): Game
+    {
+        $game = request()->user()->gameInProgress;
+
+        abort_if(is_null($game), 400, 'There is no game in progress');
+
+        return $game;
     }
 }

@@ -20,6 +20,7 @@ class GameResource extends JsonResource
             'remainingIncorrectGuesses' => $this->remaining_incorrect_guesses,
             'currentWord' => $this->current_word,
             'status' => $this->status,
+            'difficulty' => $this->difficulty,
         ];
     }
 }
