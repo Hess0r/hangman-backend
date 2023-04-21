@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\WordController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,4 +35,13 @@ Route::controller(GameController::class)
         Route::post('/', 'store')->name('create');
         Route::put('/', 'update')->name('update');
         Route::delete('/', 'destroy')->name('destroy');
+    });
+
+Route::controller(WordController::class)
+    ->middleware('auth:sanctum')
+    ->prefix('/words')
+    ->name('words.')
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
     });

@@ -60,7 +60,7 @@ class GameController extends Controller
     public function update(Request $request, Guess $guessAction)
     {
         $validated = $request->validate([
-            'letter' => ['required', 'string', 'size:1'],
+            'letter' => ['required', 'alpha:ascii', 'size:1'],
         ]);
 
         $letter = Str::lower($validated['letter']);
