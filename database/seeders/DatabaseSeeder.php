@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             WordSeeder::class,
-            LeaderboardSeeder::class,
+            // LeaderboardSeeder::class,
         ]);
     }
 }
