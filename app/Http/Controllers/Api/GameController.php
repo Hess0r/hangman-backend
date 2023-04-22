@@ -33,7 +33,7 @@ class GameController extends Controller
 
         $word = Word::whereRaw('LENGTH(word) >= ?', [$l])
             ->whereRaw('LENGTH(word) <= ?', [$h])
-            ->whereNotIn('id', $request->user()->games()->get()->pluck('id')->toArray())
+            ->whereNotIn('id', $request->user()->games()->get()->pluck('word_id')->toArray())
             ->inRandomOrder()
             ->first();
 
