@@ -48,7 +48,6 @@ Route::controller(WordController::class)
     });
 
 Route::controller(UserScoreController::class)
-    ->middleware('auth:sanctum')
     ->prefix('/user-score')
     ->name('user-score.')
     ->group(function () {
