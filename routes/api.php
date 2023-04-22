@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GameController;
+use App\Http\Controllers\Api\UserScoreController;
 use App\Http\Controllers\Api\WordController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,4 +45,12 @@ Route::controller(WordController::class)
     ->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'store')->name('store');
+    });
+
+Route::controller(UserScoreController::class)
+    ->middleware('auth:sanctum')
+    ->prefix('/user-score')
+    ->name('user-score.')
+    ->group(function () {
+        Route::get('/', 'index')->name('index');
     });

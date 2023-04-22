@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\GameDifficulty;
+use App\Enums\GameStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,13 @@ class GameFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'word_id' => 1,
+            'difficulty' => GameDifficulty::EASY,
+            'correct_letters' => '',
+            'incorrect_letters' => '',
+            'current_word' => '',
+            'remaining_letters' => '',
+            'status' => fake()->randomElement([GameStatus::LOST, GameStatus::WON]),
         ];
     }
 }
