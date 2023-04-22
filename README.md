@@ -40,4 +40,4 @@ php artisan serve
 
 The required php version is `^8.1`;
 
-> NOTE: Laravel Sanctum is used for authentication, so if the frontend is running on a different address then the usual (localhost:3000, localhost:5173, etc.), extend the stateful domains with the required value.
+> NOTE: Laravel Sanctum is used for authentication, so if the frontend is running on a different address than the usual (localhost:3000, localhost:5173, etc.), extend the stateful domains with the required value.
