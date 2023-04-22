@@ -16,7 +16,7 @@ return new class extends Migration
                 id,
                 name,
                 score,
-                RANK() OVER (ORDER BY score DESC) AS rank
+                DENSE_RANK() OVER (ORDER BY score DESC) AS rank
             FROM (
                 SELECT
                     u.id AS id,

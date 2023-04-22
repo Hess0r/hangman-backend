@@ -15,7 +15,7 @@ class UserScoreController extends Controller
 
         if (Auth::guard('sanctum')->check()) {
             $user = Auth::guard('sanctum')->user();
-            if (! $scoreBoard->contains($user)) {
+            if (! $scoreBoard->contains($user->id)) {
                 $scoreBoard->pop();
 
                 $scoreBoard->push(UserScore::firstWhere('id', $user->id));
